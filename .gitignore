@@ -1,7 +1,7 @@
 # Node
 node_modules/
 
-# Env
+# Env (NUNCA subir)
 .env
 
 # Logs
@@ -13,7 +13,8 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Prisma
+# Prisma (SQLite local)
+dev.db
 prisma/dev.db
 prisma/dev.db-journal
 
