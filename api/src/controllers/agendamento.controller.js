@@ -1,28 +1,23 @@
-import {
-  criarAgendamento,
-  atualizarAgendamento,
-  buscarHistorico,
-  atualizarStatus,
-} from "../services/agendamento.service.js";
-
+import * as agendamentoService from "../services/agendamento.service.js";
 import { z } from "zod";
 
 const agendamentoSchema = z.object({
   clienteId: z.number(),
   dataHora: z.string(),
   servicos: z.array(z.number()).min(1),
+  forcar: z.boolean().optional(),
 });
-
-const Status = {
-  AGENDADO: "AGENDADO",
-  CONCLUIDO: "CONCLUIDO",
-  CANCELADO: "CANCELADO",
-};
 
 export async function criarAgendamentoController(req, res) {
   try {
     const data = agendamentoSchema.parse(req.body);
-    const result = await criarAgendamento(data);
+
+    const result = await agendamentoService.criarAgendamento(data, data.forcar);
+
+    if (result.isSugestao) {
+      return res.status(200).json(result);
+    }
+
     res.status(201).json(result);
   } catch (err) {
     res.status(400).json({
@@ -35,10 +30,20 @@ export async function criarAgendamentoController(req, res) {
 export async function atualizarAgendamentoController(req, res) {
   try {
     const { id } = req.params;
-    const result = await atualizarAgendamento(Number(id), req.body.dataHora);
+    const { dataHora, isAdmin } = req.body;
+
+    const result = await agendamentoService.atualizarAgendamento(
+      Number(id),
+      dataHora,
+      isAdmin,
+    );
+
     res.json(result);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({
+      error: true,
+      message: err.message,
+    });
   }
 }
 
@@ -49,7 +54,11 @@ export async function historicoController(req, res) {
     const idConvertido =
       clienteId && clienteId !== "undefined" ? Number(clienteId) : undefined;
 
-    const result = await buscarHistorico(idConvertido, inicio, fim);
+    const result = await agendamentoService.buscarHistorico(
+      idConvertido,
+      inicio,
+      fim,
+    );
     res.json(result);
   } catch (err) {
     res.status(400).json({
@@ -64,13 +73,12 @@ export async function statusController(req, res) {
     const { id } = req.params;
     const { status } = req.body;
 
-    if (!Object.values(Status).includes(status)) {
-      return res.status(400).json({ error: "Status inválido" });
-    }
-
-    const result = await atualizarStatus(Number(id), status);
+    const result = await agendamentoService.atualizarStatus(Number(id), status);
     res.json(result);
   } catch (err) {
-    res.status(400).json({ error: "Erro ao atualizar status: " + err.message });
+    res.status(400).json({
+      error: true,
+      message: "Erro ao atualizar status: " + err.message,
+    });
   }
 }

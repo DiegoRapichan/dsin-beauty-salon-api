@@ -4,57 +4,41 @@ import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log(" Iniciando o seed do banco de dados...");
+  console.log("🚀 Populando banco de dados...");
 
-  const saltRounds = 10;
-  const passwordHash = await bcrypt.hash("123456", saltRounds);
+  await prisma.agendamentoServico.deleteMany();
+  await prisma.agendamento.deleteMany();
+  await prisma.user.deleteMany();
 
-  const user = await prisma.user.upsert({
-    where: { email: "admin@salao.com" },
-    update: {},
-    create: {
-      nome: "Administrador Leila",
-      email: "admin@salao.com",
-      password: passwordHash,
+  const hash = await bcrypt.hash("123456", 10);
+  await prisma.user.create({
+    data: { nome: "Leila Salon", email: "admin@salao.com", password: hash },
+  });
+
+  const cliente = await prisma.cliente.create({
+    data: { nome: "Maria Silva", telefone: "4399999999" },
+  });
+  const servico = await prisma.servico.create({
+    data: { nome: "Corte e Escova", preco: 120, duracao: 60 },
+  });
+
+  const dataHoje = new Date();
+  dataHoje.setHours(15, 0, 0, 0);
+
+  await prisma.agendamento.create({
+    data: {
+      clienteId: cliente.id,
+      data: dataHoje,
+      status: "AGENDADO",
+      servicos: {
+        create: [{ servicoId: servico.id }],
+      },
     },
   });
 
-  console.log(" Usuário admin criado: admin@salao.com / 123456");
-
-  await prisma.cliente.deleteMany({});
-  const clientes = [
-    { nome: "Maria Silva", telefone: "11999999999" },
-    { nome: "João Souza", telefone: "11988888888" },
-    { nome: "Ana Paula", telefone: "43977777777" },
-  ];
-
-  for (const cliente of clientes) {
-    await prisma.cliente.create({ data: cliente });
-  }
-  console.log(" Clientes de teste inseridos.");
-
-  await prisma.servico.deleteMany({});
-  const servicos = [
-    { nome: "Corte de Cabelo", preco: 50.0, duracao: 30 },
-    { nome: "Manicure", preco: 40.0, duracao: 60 },
-    { nome: "Escova", preco: 60.0, duracao: 30 },
-    { nome: "Barba", preco: 30.0, duracao: 30 },
-    { nome: "Hidratação", preco: 80.0, duracao: 60 },
-  ];
-
-  for (const servico of servicos) {
-    await prisma.servico.create({ data: servico });
-  }
-  console.log(" Serviços de teste inseridos.");
-
-  console.log("\n Seed finalizado com sucesso!");
+  console.log("Seed finalizado!");
 }
 
 main()
-  .catch((e) => {
-    console.error(" Erro ao executar o seed:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch((e) => console.error(e))
+  .finally(() => prisma.$disconnect());

@@ -1,68 +1,126 @@
 import { prisma } from "../prisma.js";
 import dayjs from "dayjs";
 
-export async function criarAgendamento(data) {
-  const { clienteId, dataHora, servicos } = data;
+export const STATUS = {
+  AGENDADO: "AGENDADO",
+  CANCELADO: "CANCELADO",
+  CONCLUIDO: "CONCLUIDO",
+};
 
-  const inicioSemana = dayjs(dataHora).startOf("week").toDate();
-  const fimSemana = dayjs(dataHora).endOf("week").toDate();
+export async function buscarHistorico(clienteId, inicio, fim) {
+  const where = {};
+
+  if (clienteId) where.clienteId = clienteId;
+
+  if (inicio && fim) {
+    where.data = {
+      gte: new Date(inicio),
+      lte: new Date(fim),
+    };
+  }
+
+  return await prisma.agendamento.findMany({
+    where,
+    include: {
+      cliente: true,
+      servicos: {
+        include: { servico: true },
+      },
+    },
+    orderBy: { data: "asc" },
+  });
+}
+
+export async function criarAgendamento(data, forcar = false) {
+  const { clienteId, dataHora, servicos } = data;
+  const dataAgendamento = new Date(dataHora);
 
   const conflitoHorario = await prisma.agendamento.findFirst({
     where: {
-      data: new Date(dataHora),
-      status: "AGENDADO",
+      data: dataAgendamento,
+      status: STATUS.AGENDADO,
     },
   });
 
   if (conflitoHorario) {
-    throw new Error("Este horário já está reservado por outro cliente.");
+    throw new Error(
+      "Horário Indisponível: A Leila já possui um atendimento neste horário.",
+    );
   }
 
-  const existente = await prisma.agendamento.findFirst({
-    where: {
-      clienteId,
-      data: {
-        gte: inicioSemana,
-        lte: fimSemana,
-      },
-    },
-  });
+  if (!forcar) {
+    const inicioSemana = dayjs(dataHora).startOf("week").toDate();
+    const fimSemana = dayjs(dataHora).endOf("week").toDate();
 
-  if (existente) {
-    return {
-      message: "Você já possui agendamento nessa semana",
-      sugestao: existente.data,
-    };
+    const existenteNaSemana = await prisma.agendamento.findFirst({
+      where: {
+        clienteId,
+        status: STATUS.AGENDADO,
+        data: {
+          gte: inicioSemana,
+          lte: fimSemana,
+        },
+      },
+    });
+
+    if (existenteNaSemana) {
+      return {
+        isSugestao: true,
+        message: "Sugestão da Leila",
+        detalhes: `Você já possui um agendamento nesta semana para o dia ${dayjs(existenteNaSemana.data).format("DD/MM")}. Deseja agendar para este mesmo dia?`,
+        dataSugestao: existenteNaSemana.data,
+      };
+    }
   }
 
   return prisma.agendamento.create({
     data: {
       clienteId,
-      data: new Date(dataHora),
-      status: "AGENDADO",
+      data: dataAgendamento,
+      status: STATUS.AGENDADO,
       servicos: {
-        create: servicos.map((id) => ({ servicoId: id })),
+        create: servicos.map((id) => ({
+          servicoId: id,
+        })),
       },
     },
     include: {
       servicos: {
-        include: {
-          servico: true,
-        },
+        include: { servico: true },
       },
     },
   });
 }
 
-export async function atualizarAgendamento(id, novaData) {
+export async function atualizarAgendamento(id, novaData, isAdmin = false) {
   const agendamento = await prisma.agendamento.findUnique({
     where: { id },
   });
 
-  const diff = dayjs(agendamento.data).diff(dayjs(), "day");
+  if (!agendamento) throw new Error("Agendamento não encontrado.");
 
-  if (diff < 2) {
-    throw new Error("Alteração só permitida com 2 dias de antecedência");
+  if (!isAdmin) {
+    const agora = dayjs();
+    const dataDoAgendamento = dayjs(agendamento.data);
+    const diferencaDias = dataDoAgendamento.diff(agora, "day");
+
+    if (diferencaDias < 2) {
+      throw new Error(
+        "Pelo sistema, alterações só são permitidas com 2 dias de antecedência. Por favor, ligue para o salão.",
+      );
+    }
+  }
+
+  const conflito = await prisma.agendamento.findFirst({
+    where: {
+      id: { not: id },
+      data: new Date(novaData),
+      status: STATUS.AGENDADO,
+    },
+  });
+
+  if (conflito) {
+    throw new Error("O novo horário escolhido já está ocupado.");
   }
 
   return prisma.agendamento.update({
@@ -71,40 +129,11 @@ export async function atualizarAgendamento(id, novaData) {
   });
 }
 
-export async function buscarHistorico(clienteId, inicio, fim) {
-  return prisma.agendamento.findMany({
-    where: {
-      ...(clienteId ? { clienteId: Number(clienteId) } : {}),
-
-      data: {
-        gte: new Date(inicio),
-        lte: new Date(fim),
-      },
-    },
-    include: {
-      cliente: true,
-      servicos: {
-        include: {
-          servico: true,
-        },
-      },
-    },
-    orderBy: {
-      data: "asc",
-    },
-  });
-}
-
-export const STATUS = {
-  AGENDADO: "AGENDADO",
-  CANCELADO: "CANCELADO",
-  CONCLUIDO: "CONCLUIDO",
-};
-
 export async function atualizarStatus(id, status) {
   if (!Object.values(STATUS).includes(status)) {
     throw new Error("Status inválido");
   }
+
   return prisma.agendamento.update({
     where: { id },
     data: { status },
