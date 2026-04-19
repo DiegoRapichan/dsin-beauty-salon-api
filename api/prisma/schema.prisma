@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id       Int    @id @default(autoincrement())
+  nome     String // Adicione esta linha
   email    String @unique
   password String
 }
@@ -24,21 +25,17 @@ model Servico {
   id        Int     @id @default(autoincrement())
   nome      String
   preco     Float
-  duracao   Int
+  duracao   Int      @default(30)
   agendamentos AgendamentoServico[]
 }
 
-enum StatusAgendamento {
-  AGENDADO
-  CANCELADO
-  CONCLUIDO
-}
+
 
 model Agendamento {
   id         Int      @id @default(autoincrement())
   clienteId  Int
   data       DateTime
-  status     StatusAgendamento
+  status     String   @default("AGENDADO")
   cliente    Cliente  @relation(fields: [clienteId], references: [id])
   servicos   AgendamentoServico[]
 }

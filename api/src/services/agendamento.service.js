@@ -74,18 +74,23 @@ export async function atualizarAgendamento(id, novaData) {
 export async function buscarHistorico(clienteId, inicio, fim) {
   return prisma.agendamento.findMany({
     where: {
-      clienteId,
+      ...(clienteId ? { clienteId: Number(clienteId) } : {}),
+
       data: {
         gte: new Date(inicio),
         lte: new Date(fim),
       },
     },
     include: {
+      cliente: true,
       servicos: {
         include: {
           servico: true,
         },
       },
+    },
+    orderBy: {
+      data: "asc",
     },
   });
 }

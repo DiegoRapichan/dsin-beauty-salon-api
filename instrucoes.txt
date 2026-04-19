@@ -1,0 +1,18 @@
+TECNOLOGIAS UTILIZADAS:
+- Back-End: Node.js, Express, Prisma ORM, JWT, Bcrypt, Day.js[cite: 15].
+- Banco de Dados: SQLite (arquivo dev.db incluído)[cite: 5].
+- Front-End: React, Tailwind CSS, Axios.
+
+COMO RODAR O PROJETO:
+1. No diretório /api: 
+   - npm install
+   - npx prisma migrate dev --name init
+   - npx prisma db seed
+   - npm run dev
+2. No diretório /web:
+   - npm install
+   - npm run dev
+
+OBSERVAÇÕES:
+O sistema valida automaticamente a regra de antecedência de 2 dias para alterações. 
+Caso o cliente tente reagendar com menos de 48h, o sistema bloqueia a ação via API e Front-End.
