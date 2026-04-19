@@ -5,12 +5,26 @@ import {
   atualizarStatus,
 } from "../services/agendamento.service.js";
 
+import { z } from "zod";
+
+const agendamentoSchema = z.object({
+  clienteId: z.number(),
+  dataHora: z.string(),
+  servicos: z.array(z.number()).min(1),
+});
+
 export async function criarAgendamentoController(req, res) {
   try {
-    const result = await criarAgendamento(req.body);
-    res.json(result);
+    const data = agendamentoSchema.parse(req.body);
+
+    const result = await criarAgendamento(data);
+
+    res.status(201).json(result);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({
+      error: true,
+      message: err.message,
+    });
   }
 }
 

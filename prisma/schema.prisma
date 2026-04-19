@@ -3,7 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite" 
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
 }
 
 model Cliente {
@@ -21,11 +28,17 @@ model Servico {
   agendamentos AgendamentoServico[]
 }
 
+enum StatusAgendamento {
+  AGENDADO
+  CANCELADO
+  CONCLUIDO
+}
+
 model Agendamento {
   id         Int      @id @default(autoincrement())
   clienteId  Int
   data       DateTime
-  status     String
+  status     StatusAgendamento
   cliente    Cliente  @relation(fields: [clienteId], references: [id])
   servicos   AgendamentoServico[]
 }
