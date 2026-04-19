@@ -115,7 +115,7 @@ export async function atualizarAgendamento(id, novaData, isAdmin = false) {
     where: {
       id: { not: id },
       data: new Date(novaData),
-      status: STATUS.AGENDADO,
+      status: "AGENDADO",
     },
   });
 
@@ -123,9 +123,20 @@ export async function atualizarAgendamento(id, novaData, isAdmin = false) {
     throw new Error("O novo horário escolhido já está ocupado.");
   }
 
+  const dataAntigaFormatada = dayjs(agendamento.data).format(
+    "DD/MM [às] HH:mm",
+  );
+  const dataNovaFormatada = dayjs(novaData).format("HH:mm");
+  const autor = isAdmin ? "Admin" : "Cliente";
+
+  const novaMensagemLog = `Horário alterado de ${dataAntigaFormatada} para às ${dataNovaFormatada} (Modificado por: ${autor})`;
+
   return prisma.agendamento.update({
     where: { id },
-    data: { data: new Date(novaData) },
+    data: {
+      data: new Date(novaData),
+      log: novaMensagemLog,
+    },
   });
 }
 

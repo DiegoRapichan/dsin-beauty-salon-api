@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../api";
+import api from "../../api";
 import { useNavigate } from "react-router-dom";
 
 export default function Agendamento() {
@@ -66,7 +66,6 @@ export default function Agendamento() {
     const dataSelecionada = new Date(form.dataHora);
     const agora = new Date();
 
-    // Damos uma tolerância de 10 minutos para trás para evitar erros de segundos
     agora.setMinutes(agora.getMinutes() - 10);
 
     if (dataSelecionada < agora) {

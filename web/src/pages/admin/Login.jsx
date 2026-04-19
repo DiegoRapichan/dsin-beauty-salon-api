@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../api";
+import api from "../../api";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -10,17 +10,12 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // 1. Chamada para a API
       const { data } = await api.post("/auth/login", { email, password });
 
-      // 2. Salva o Token
       localStorage.setItem("token", data.token);
 
-      // 3. SALVA O USUÁRIO (Importante para a trava de não se excluir)
-      // Se sua API não mandar 'data.usuario', verifique o que ela manda
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
-      // 4. Redireciona para o Dashboard
       navigate("/dashboard");
     } catch (err) {
       console.error(err);

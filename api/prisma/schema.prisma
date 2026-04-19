@@ -35,6 +35,7 @@ model Agendamento {
   id         Int      @id @default(autoincrement())
   clienteId  Int
   data       DateTime
+  log        String?
   status     String   @default("AGENDADO")
   cliente    Cliente  @relation(fields: [clienteId], references: [id])
   servicos   AgendamentoServico[]
