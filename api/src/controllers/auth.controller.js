@@ -17,3 +17,23 @@ export async function loginController(req, res) {
     res.status(400).json({ error: err.message });
   }
 }
+
+export async function loginCliente(req, res) {
+  const { telefone } = req.body;
+
+  const cliente = await prisma.cliente.findFirst({
+    where: { telefone: telefone },
+  });
+
+  if (!cliente) {
+    return res.status(404).json({ message: "Cliente não cadastrado." });
+  }
+
+  return res.json({
+    usuario: {
+      id: cliente.id,
+      nome: cliente.nome,
+      role: "CLIENTE",
+    },
+  });
+}

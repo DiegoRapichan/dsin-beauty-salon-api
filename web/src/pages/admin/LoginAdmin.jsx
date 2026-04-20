@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import api from "../../api";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function LoginAdmin() {
   const navigate = useNavigate();
+  // Mantive seus padrões de teste, mas limpei para produção se preferir
   const [email, setEmail] = useState("admin@salao.com");
   const [password, setPassword] = useState("123456");
 
@@ -13,10 +14,10 @@ export default function Login() {
       const { data } = await api.post("/auth/login", { email, password });
 
       localStorage.setItem("token", data.token);
-
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
-      navigate("/dashboard");
+      // AGORA REDIRECIONA PARA A ROTA ADMIN
+      navigate("/admin");
     } catch (err) {
       console.error(err);
       alert("Credenciais inválidas ou erro no servidor.");
@@ -41,13 +42,13 @@ export default function Login() {
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest px-1">
-              E-mail
+              E-mail Administrativo
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white transition-all"
+              className="w-full bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white transition-all placeholder:text-gray-800"
               placeholder="seu@email.com"
               required
             />
@@ -61,7 +62,7 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white transition-all"
+              className="w-full bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white transition-all placeholder:text-gray-800"
               placeholder="••••••••"
               required
             />
@@ -71,7 +72,7 @@ export default function Login() {
             type="submit"
             className="w-full bg-cyan-600 hover:bg-cyan-500 py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-cyan-900/20 active:scale-95 text-xs mt-4"
           >
-            Entrar no Sistema
+            Entrar no Painel
           </button>
         </div>
       </form>

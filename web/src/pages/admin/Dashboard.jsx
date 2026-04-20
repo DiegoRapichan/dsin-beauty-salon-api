@@ -60,7 +60,7 @@ export default function Dashboard() {
 
   const fazerLogoff = () => {
     localStorage.clear();
-    navigate("/login");
+    navigate("/admin/login");
   };
 
   return (

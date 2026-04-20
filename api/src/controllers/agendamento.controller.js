@@ -11,7 +11,6 @@ const agendamentoSchema = z.object({
 export async function criarAgendamentoController(req, res) {
   try {
     const data = agendamentoSchema.parse(req.body);
-
     const result = await agendamentoService.criarAgendamento(data, data.forcar);
 
     if (result.isSugestao) {
@@ -20,6 +19,16 @@ export async function criarAgendamentoController(req, res) {
 
     res.status(201).json(result);
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({
+        error: true,
+        message:
+          "Dados inválidos: " +
+          err.errors.map((e) => `${e.path}: ${e.message}`).join(", "),
+        details: err.errors,
+      });
+    }
+
     res.status(400).json({
       error: true,
       message: err.message,
@@ -27,10 +36,15 @@ export async function criarAgendamentoController(req, res) {
   }
 }
 
+const atualizarSchema = z.object({
+  dataHora: z.string().datetime({ message: "Formato de data inválido" }),
+  isAdmin: z.boolean().default(false),
+});
+
 export async function atualizarAgendamentoController(req, res) {
   try {
     const { id } = req.params;
-    const { dataHora, isAdmin } = req.body;
+    const { dataHora, isAdmin } = atualizarSchema.parse(req.body);
 
     const result = await agendamentoService.atualizarAgendamento(
       Number(id),
@@ -40,6 +54,11 @@ export async function atualizarAgendamentoController(req, res) {
 
     res.json(result);
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res
+        .status(400)
+        .json({ error: true, message: "Erro nos dados de atualização." });
+    }
     res.status(400).json({
       error: true,
       message: err.message,
