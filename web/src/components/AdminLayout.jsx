@@ -20,28 +20,34 @@ export default function AdminLayout({ children }) {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row bg-black min-h-screen text-white font-sans selection:bg-cyan-500/30">
+    <div className="flex flex-col md:flex-row bg-black min-h-screen text-white font-sans selection:bg-pink-500/30">
       <aside className="w-full md:w-72 bg-[#0a0a0a] border-b md:border-r border-white/5 p-6 md:p-8 flex flex-col md:sticky md:h-screen top-0 z-50">
         <div className="mb-8 md:mb-12 flex justify-between items-center md:block">
           <div>
             <h1
               onClick={() => navigate("/admin")}
-              className="text-cyan-500 font-black text-2xl md:text-3xl tracking-tighter italic leading-none cursor-pointer"
+              className="text-pink-500 font-black text-2xl md:text-3xl tracking-tighter italic leading-none cursor-pointer"
             >
-              LEILA <span className="text-white not-italic text-xl md:text-2xl">SALON</span>
+              LEILA{" "}
+              <span className="text-white not-italic text-xl md:text-2xl">
+                SALON
+              </span>
             </h1>
             <p className="text-[8px] md:text-[10px] text-gray-600 tracking-[0.4em] uppercase mt-2 font-bold italic">
               Professional Management
             </p>
           </div>
-          <button onClick={fazerLogoff} className="md:hidden text-gray-500 text-xs font-bold uppercase">
+          <button
+            onClick={fazerLogoff}
+            className="md:hidden text-gray-500 text-xs font-bold uppercase"
+          >
             Sair
           </button>
         </div>
 
         <button
           onClick={() => navigate("/admin/agendamento")}
-          className="bg-cyan-600 hover:bg-cyan-500 p-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all mb-8 shadow-lg shadow-cyan-900/20 active:scale-95 flex items-center justify-center gap-2"
+          className="bg-pink-600 hover:bg-pink-500 p-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all mb-8 shadow-lg shadow-pink-900/20 active:scale-95 flex items-center justify-center gap-2"
         >
           <span>+</span> Novo Horário
         </button>
@@ -53,7 +59,7 @@ export default function AdminLayout({ children }) {
               onClick={() => navigate(item.path)}
               className={`whitespace-nowrap px-5 py-4 rounded-xl md:rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
                 location.pathname === item.path
-                  ? "bg-white/5 text-cyan-400 border border-white/10 shadow-lg"
+                  ? "bg-white/5 text-pink-400 border border-white/10 shadow-lg"
                   : "text-gray-500 hover:text-gray-200"
               }`}
             >

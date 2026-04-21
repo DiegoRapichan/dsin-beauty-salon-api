@@ -59,7 +59,7 @@ export default function Clientes() {
       <header className="mb-10">
         <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter italic leading-none uppercase">
           Clientes{" "}
-          <span className="text-cyan-500 not-italic text-3xl align-top">★</span>
+          <span className="text-pink-500 not-italic text-3xl align-top">★</span>
         </h2>
         <p className="text-gray-500 text-sm md:text-base mt-4 font-medium italic">
           Gerenciamento e cadastro da base de contatos
@@ -76,7 +76,7 @@ export default function Clientes() {
           </label>
           <input
             value={form.nome}
-            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white text-sm"
+            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-pink-500 outline-none text-white text-sm"
             onChange={(e) => setForm({ ...form, nome: e.target.value })}
             required
           />
@@ -88,7 +88,7 @@ export default function Clientes() {
           <input
             value={form.telefone}
             maxLength={11}
-            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white text-sm font-mono"
+            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-pink-500 outline-none text-white text-sm font-mono"
             onChange={(e) =>
               setForm({ ...form, telefone: e.target.value.replace(/\D/g, "") })
             }
@@ -98,7 +98,7 @@ export default function Clientes() {
         <div className="flex items-end gap-2">
           <button
             type="submit"
-            className="bg-cyan-600 hover:bg-cyan-500 text-white h-[58px] rounded-2xl font-black uppercase tracking-widest transition-all flex-1 text-xs"
+            className="bg-pink-600 hover:bg-pink-500 text-white h-[58px] rounded-2xl font-black uppercase tracking-widest transition-all flex-1 text-xs"
           >
             {editandoId ? "Salvar" : "Cadastrar"}
           </button>
@@ -126,11 +126,11 @@ export default function Clientes() {
         {clientes.map((c) => (
           <div
             key={c.id}
-            className="group bg-[#0f0f0f] border border-white/5 rounded-2xl hover:border-cyan-500/40 transition-all shadow-xl"
+            className="group bg-[#0f0f0f] border border-white/5 rounded-2xl hover:border-pink-500/40 transition-all shadow-xl"
           >
             <div className="flex items-center gap-4 p-4">
               {/* Avatar — flex-shrink-0 para nunca encolher */}
-              <div className="flex-shrink-0 w-12 h-12 bg-black rounded-full flex items-center justify-center border border-white/10 text-cyan-500 font-black text-lg">
+              <div className="flex-shrink-0 w-12 h-12 bg-black rounded-full flex items-center justify-center border border-white/10 text-pink-500 font-black text-lg">
                 {c.nome.charAt(0).toUpperCase()}
               </div>
 
@@ -140,7 +140,7 @@ export default function Clientes() {
                 break-words: quebra linha em nomes longos sem cortar com "…"
               */}
               <div className="flex-1 min-w-0">
-                <p className="font-black text-base text-white group-hover:text-cyan-400 transition-colors leading-snug break-words">
+                <p className="font-black text-base text-white group-hover:text-pink-400 transition-colors leading-snug break-words">
                   {c.nome}
                 </p>
                 <p className="text-[11px] text-gray-400 font-mono tracking-widest uppercase mt-1">

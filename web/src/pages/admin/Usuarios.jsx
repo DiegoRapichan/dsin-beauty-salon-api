@@ -73,7 +73,7 @@ export default function Usuarios() {
     <AdminLayout>
       <header className="mb-10 px-2">
         <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter italic leading-none">
-          EQUIPE <span className="text-cyan-500">LEILA SALON</span>
+          EQUIPE <span className="text-pink-500">LEILA SALON</span>
         </h2>
         <p className="text-gray-500 text-sm mt-3 font-medium">
           Gerenciamento de acessos e colaboradores
@@ -92,7 +92,7 @@ export default function Usuarios() {
             type="text"
             placeholder="Ex: Maria Silva"
             value={form.nome}
-            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none transition-all text-white text-sm"
+            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-pink-500 outline-none transition-all text-white text-sm"
             onChange={(e) => setForm({ ...form, nome: e.target.value })}
             required
           />
@@ -105,7 +105,7 @@ export default function Usuarios() {
             type="email"
             placeholder="email@salao.com"
             value={form.email}
-            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none transition-all text-white text-sm"
+            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-pink-500 outline-none transition-all text-white text-sm"
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
           />
@@ -118,7 +118,7 @@ export default function Usuarios() {
             type="password"
             placeholder="••••••••"
             value={form.senha}
-            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none transition-all text-white text-sm"
+            className="bg-black p-4 rounded-2xl border border-gray-800 focus:border-pink-500 outline-none transition-all text-white text-sm"
             onChange={(e) => setForm({ ...form, senha: e.target.value })}
             required={!editandoId}
           />
@@ -126,7 +126,7 @@ export default function Usuarios() {
         <div className="flex items-end gap-2">
           <button
             type="submit"
-            className="bg-cyan-600 hover:bg-cyan-500 text-white h-[52px] md:h-14 rounded-2xl font-black uppercase tracking-widest transition-all flex-1 shadow-lg shadow-cyan-900/20 active:scale-95 text-[10px] md:text-xs"
+            className="bg-pink-600 hover:bg-pink-500 text-white h-[52px] md:h-14 rounded-2xl font-black uppercase tracking-widest transition-all flex-1 shadow-lg shadow-pink-900/20 active:scale-95 text-[10px] md:text-xs"
           >
             {editandoId ? "Salvar" : "Cadastrar"}
           </button>
@@ -154,10 +154,10 @@ export default function Usuarios() {
         {usuarios.map((u) => (
           <div
             key={u.id}
-            className="group bg-[#0f172a] border border-gray-800 rounded-[2.5rem] p-6 flex flex-col gap-6 hover:border-cyan-500/50 transition-all shadow-2xl"
+            className="group bg-[#0f172a] border border-gray-800 rounded-[2.5rem] p-6 flex flex-col gap-6 hover:border-pink-500/50 transition-all shadow-2xl"
           >
             <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 w-14 h-14 bg-cyan-500/20 rounded-2xl flex items-center justify-center border border-cyan-500/30 text-cyan-400 font-black text-2xl shadow-inner">
+              <div className="flex-shrink-0 w-14 h-14 bg-pink-500/20 rounded-2xl flex items-center justify-center border border-pink-500/30 text-pink-400 font-black text-2xl shadow-inner">
                 {u.nome.charAt(0).toUpperCase()}
               </div>
 

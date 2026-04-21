@@ -73,8 +73,8 @@ export default function Dashboard() {
           {
             label: "Total Agendado",
             valor: stats.total,
-            cor: "text-cyan-500",
-            hover: "hover:border-cyan-500/20",
+            cor: "text-pink-500",
+            hover: "hover:border-pink-500/20",
           },
           {
             label: "Concluídos",
@@ -98,7 +98,7 @@ export default function Dashboard() {
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
         <div>
           <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-white leading-none uppercase">
-            Agenda <span className="text-cyan-500">Beauty</span>
+            Agenda <span className="text-pink-500">Beauty</span>
           </h2>
           <p className="text-gray-500 mt-3 font-medium italic">
             Visualizando atendimentos de{" "}
@@ -114,7 +114,7 @@ export default function Dashboard() {
             type="date"
             value={dataFiltro}
             onChange={(e) => setDataFiltro(e.target.value)}
-            className="bg-[#111] px-6 py-4 rounded-2xl border border-white/10 text-cyan-500 font-mono text-sm shadow-2xl outline-none focus:border-cyan-500/50 transition-all cursor-pointer"
+            className="bg-[#111] px-6 py-4 rounded-2xl border border-white/10 text-pink-500 font-mono text-sm shadow-2xl outline-none focus:border-pink-500/50 transition-all cursor-pointer"
           />
         </div>
       </header>
@@ -131,11 +131,11 @@ export default function Dashboard() {
           agendamentos.map((a) => (
             <div
               key={a.id}
-              className={`group bg-[#0f0f0f] border border-white/5 p-6 md:p-8 rounded-[2rem] flex flex-col gap-4 hover:border-cyan-500/40 transition-all duration-500 shadow-2xl w-full box-border overflow-hidden ${a.status === "CANCELADO" ? "opacity-40 grayscale-[0.5]" : ""}`}
+              className={`group bg-[#0f0f0f] border border-white/5 p-6 md:p-8 rounded-[2rem] flex flex-col gap-4 hover:border-pink-500/40 transition-all duration-500 shadow-2xl w-full box-border overflow-hidden ${a.status === "CANCELADO" ? "opacity-40 grayscale-[0.5]" : ""}`}
             >
               {/* O mapeamento da lista continua o mesmo que você já tem */}
               <div className="w-full flex justify-between items-center">
-                <h4 className="font-black text-xl md:text-2xl text-white group-hover:text-cyan-400 transition-colors truncate pr-4">
+                <h4 className="font-black text-xl md:text-2xl text-white group-hover:text-pink-400 transition-colors truncate pr-4">
                   {a.cliente.nome}
                 </h4>
                 <div className="flex items-center gap-3">
@@ -155,8 +155,8 @@ export default function Dashboard() {
 
               <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 w-full">
                 <div className="flex items-center gap-4 md:gap-8 flex-1 min-w-0">
-                  <div className="flex flex-col items-center justify-center bg-black flex-shrink-0 w-[75px] h-[75px] md:w-[90px] md:h-[90px] rounded-2xl border border-white/5 shadow-inner group-hover:border-cyan-500/30 transition-all">
-                    <span className="text-cyan-400 font-black text-lg md:text-2xl tracking-tighter leading-none">
+                  <div className="flex flex-col items-center justify-center bg-black flex-shrink-0 w-[75px] h-[75px] md:w-[90px] md:h-[90px] rounded-2xl border border-white/5 shadow-inner group-hover:border-pink-500/30 transition-all">
+                    <span className="text-pink-400 font-black text-lg md:text-2xl tracking-tighter leading-none">
                       {new Date(a.data).toLocaleTimeString("pt-BR", {
                         hour: "2-digit",
                         minute: "2-digit",

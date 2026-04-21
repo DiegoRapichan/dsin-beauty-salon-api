@@ -60,18 +60,37 @@ A **Cabeleleila Leila** enfrentava três desafios principais que este software r
 
 ---
 
-## Evidências do Projeto
+## Evidências do Projeto (Screenshots)
 
-| Funcionalidade       | Descrição Técnica                             | Screenshot                          |
-| -------------------- | --------------------------------------------- | ----------------------------------- |
-| Dashboard Admin      | Faturamento real e métricas de atendimentos   | `screenshots/admin_dashboard.png`   |
-| Gestão de Serviços   | CRUD com controle de duração e preço imutável | `screenshots/admin_servicos.png`    |
-| Cadastro de Clientes | Identificação e validação de 11 dígitos       | `screenshots/admin_clientes.png`    |
-| Sugestão de Semana   | Inteligência de agrupamento no agendamento    | `screenshots/cliente_sugestao.png`  |
-| Trava de 48h         | Validação de prazo e restrição de edição      | `screenshots/cliente_trava_48h.png` |
-| Histórico com Log    | Rastreabilidade de alterações para o cliente  | `screenshots/cliente_historico.png` |
-| Documentação API     | Swagger UI com todos os endpoints mapeados    | `screenshots/tecnico_swagger.png`   |
-| Testes Automatizados | Suíte de testes unitários passando (Vitest)   | `screenshots/tecnico_testes.png`    |
+### Visão do Administrador (Gestão)
+
+| Funcionalidade       | Descrição Técnica                              | Screenshot                        |
+| -------------------- | ---------------------------------------------- | --------------------------------- |
+| Login Administrativo | Acesso seguro para gestores e funcionários     | `screenshots/admin_login.png`     |
+| Dashboard Principal  | Métricas de faturamento real e agenda do dia   | `screenshots/admin_dashboard.png` |
+| Gestão de Serviços   | Controle de CRUD, duração e preços             | `screenshots/admin_servicos.png`  |
+| Base de Clientes     | Listagem e busca de clientes cadastrados       | `screenshots/admin_clientes.png`  |
+| Gestão de Usuários   | Controle de acesso dos funcionários ao sistema | `screenshots/admin_usuarios.png`  |
+
+### Experiência do Cliente
+
+| Funcionalidade       | Descrição Técnica                                       | Screenshot                                                           |
+| -------------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
+| Primeiro Acesso      | Landing page de boas-vindas ao salão                    | `screenshots/cliente_primeiro_acesso.png`                            |
+| Login / Cadastro     | Fluxo simplificado via telefone (11 dígitos)            | `screenshots/cliente_login.png` / `screenshots/cadastro_cliente.png` |
+| Novo Agendamento     | Interface de seleção de múltiplos serviços e horários   | `screenshots/cliente_agendamento.png`                                |
+| Sugestão Inteligente | Recomendação para agrupar horários na mesma semana      | `screenshots/cliente_recomendacao_agendamento.png`                   |
+| Meus Horários        | Central de agendamentos com status e trava de 48h       | `screenshots/cliente_meus_horarios.png`                              |
+| Reagendamento        | Interface de alteração com validação de disponibilidade | `screenshots/cliente_reagendar.png`                                  |
+
+### Camada Técnica (Backend & Dados)
+
+| Componente           | Descrição Técnica                               | Screenshot                                          |
+| -------------------- | ----------------------------------------------- | --------------------------------------------------- |
+| Documentação Swagger | Todos os endpoints REST mapeados e testáveis    | `screenshots/tecnico_swagger.png`                   |
+| Suíte de Testes      | Validações unitárias e de integração (Vitest)   | `screenshots/tecnico_testes.png`                    |
+| Modelagem Prisma     | Tabela de Agendamentos (relação Cliente/Status) | `screenshots/tecnico_prisma_Agendamento.png`        |
+| Preço Imutável       | Tabela intermediária salvando o valor histórico | `screenshots/tecnico_prisma_AgendamentoServico.png` |
 
 ---
 

@@ -58,11 +58,24 @@ export default function Servicos() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const excluir = async (id) => {
+    if (!window.confirm("Deseja realmente excluir este serviço?")) return;
+    try {
+      await api.delete(`/servicos/${id}`);
+      carregarServicos();
+    } catch (err) {
+      setErro(
+        err.response?.data?.error ||
+          "Não é possível excluir um serviço com agendamentos vinculados.",
+      );
+    }
+  };
+
   return (
     <AdminLayout>
       <header className="mb-10 uppercase italic">
         <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
-          Menu de <span className="text-cyan-500">Serviços</span>
+          Menu de <span className="text-pink-500">Serviços</span>
         </h2>
       </header>
 
@@ -77,7 +90,7 @@ export default function Servicos() {
             </label>
             <input
               value={form.nome}
-              className="bg-black p-4 rounded-xl border border-gray-800 focus:border-cyan-500 outline-none text-white text-sm"
+              className="bg-black p-4 rounded-xl border border-gray-800 focus:border-pink-500 outline-none text-white text-sm"
               onChange={(e) => setForm({ ...form, nome: e.target.value })}
               required
             />
@@ -106,7 +119,7 @@ export default function Servicos() {
               type="number"
               step="0.01"
               value={form.preco}
-              className="bg-black p-4 rounded-xl border border-gray-800 focus:border-cyan-500 outline-none text-white text-sm"
+              className="bg-black p-4 rounded-xl border border-gray-800 focus:border-pink-500 outline-none text-white text-sm"
               onChange={(e) => setForm({ ...form, preco: e.target.value })}
               required
             />
@@ -114,7 +127,7 @@ export default function Servicos() {
           <div className="flex items-end gap-2">
             <button
               type="submit"
-              className="bg-cyan-600 hover:bg-cyan-500 text-white h-14 rounded-xl font-black uppercase tracking-widest transition-all flex-1 text-xs"
+              className="bg-pink-600 hover:bg-pink-500 text-white h-14 rounded-xl font-black uppercase tracking-widest transition-all flex-1 text-xs"
             >
               {editandoId ? "Salvar" : "Adicionar"}
             </button>
@@ -143,19 +156,13 @@ export default function Servicos() {
         {servicos.map((s) => (
           <div
             key={s.id}
-            className="group p-8 bg-[#0f0f0f] rounded-[2.5rem] border border-white/5 flex flex-col hover:border-cyan-500/30 transition-all duration-500 shadow-xl"
+            className="group p-8 bg-[#0f0f0f] rounded-[2.5rem] border border-white/5 flex flex-col hover:border-pink-500/30 transition-all duration-500 shadow-xl"
           >
-            {/*
-              Header: badge e nome em flex-col.
-              Badge no topo (alinhado à direita), nome abaixo ocupando
-              toda a largura sem risco de sobreposição.
-            */}
             <div className="flex flex-col mb-6">
-              {/* Badge no topo-direito via self-end */}
-              <div className="self-end bg-black text-cyan-500 text-[10px] font-black px-3 py-1 rounded-lg border border-cyan-500/20 mb-3 whitespace-nowrap">
+              <div className="self-end bg-black text-pink-500 text-[10px] font-black px-3 py-1 rounded-lg border border-pink-500/20 mb-3 whitespace-nowrap">
                 {s.duracao}m
               </div>
-              <h3 className="font-black text-2xl text-white group-hover:text-cyan-400 transition-colors leading-[1.15] break-words">
+              <h3 className="font-black text-2xl text-white group-hover:text-pink-400 transition-colors leading-[1.15] break-words">
                 {s.nome}
               </h3>
             </div>
@@ -176,6 +183,13 @@ export default function Servicos() {
                 className="flex-1 py-4 bg-[#111] hover:bg-yellow-600/10 text-yellow-600 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
               >
                 Editar
+              </button>
+              <button
+                onClick={() => excluir(s.id)}
+                className="w-14 py-4 bg-[#111] hover:bg-red-600/10 text-gray-700 hover:text-red-500 border border-white/5 rounded-2xl text-sm transition-all flex items-center justify-center"
+                title="Excluir serviço"
+              >
+                ✕
               </button>
             </div>
           </div>

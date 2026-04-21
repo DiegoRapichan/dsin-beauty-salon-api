@@ -1,5 +1,12 @@
 import { prisma } from "../prisma.js";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
+
+// Configuração de Fuso Horário Brasil
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("America/Sao_Paulo");
 
 export const STATUS = {
   AGENDADO: "AGENDADO",
@@ -20,7 +27,11 @@ function validarSlot(dataHora) {
 }
 
 function validarFuturo(dataHora) {
-  if (dayjs(dataHora).isBefore(dayjs())) {
+  // Margem de 5 minutos para evitar erros de delay entre cliques no front e processamento no back
+  const agora = dayjs().startOf("minute").subtract(5, "minute");
+  const agendamento = dayjs(dataHora).startOf("minute");
+
+  if (agendamento.isBefore(agora)) {
     throw new Error(
       "Não é possível agendar em uma data ou horário que já passou.",
     );
@@ -39,7 +50,8 @@ async function mapearOcupacaoDoDia(data, excluirId = null) {
     where: {
       status: STATUS.AGENDADO,
       data: { gte: inicioDia, lte: fimDia },
-      ...(excluirId ? { id: { not: excluirId } } : {}),
+      // Se estivermos editando, ignoramos os slots do próprio agendamento
+      ...(excluirId ? { id: { not: Number(excluirId) } } : {}),
     },
     include: { servicos: { include: { servico: true } } },
   });
@@ -99,7 +111,7 @@ export async function buscarSlotsComStatus({
     const hora = cursor.format("HH:mm");
 
     let status;
-    if (cursor.isBefore(agora) || cursor.isSame(agora)) {
+    if (cursor.isBefore(agora.subtract(1, "minute"))) {
       status = "passado";
     } else if (ocupados.has(hora)) {
       status = "ocupado";
@@ -123,7 +135,7 @@ export async function buscarSlotsDisponiveis({ data, duracaoMinutos }) {
 
 export async function buscarHistorico(clienteId, inicio, fim) {
   const where = {};
-  if (clienteId) where.clienteId = clienteId;
+  if (clienteId) where.clienteId = Number(clienteId);
   if (inicio && fim) {
     where.data = { gte: new Date(inicio), lte: new Date(fim) };
   }
@@ -153,9 +165,7 @@ export async function criarAgendamento(data, forcar = false) {
   const ocupados = await mapearOcupacaoDoDia(dataHora);
 
   if (ocupados.has(inicio.format("HH:mm"))) {
-    throw new Error(
-      "Horário indisponível: já existe um atendimento neste slot.",
-    );
+    throw new Error("Horário indisponível.");
   }
 
   if (
@@ -166,10 +176,7 @@ export async function criarAgendamento(data, forcar = false) {
       dataHora,
     )
   ) {
-    const blocosNecessarios = Math.ceil(duracao / 30);
-    throw new Error(
-      `Não há espaço suficiente neste horário para ${duracao} minutos de serviço (${blocosNecessarios} blocos de 30min).`,
-    );
+    throw new Error("Espaço insuficiente para a duração dos serviços.");
   }
 
   if (!forcar) {
@@ -178,7 +185,7 @@ export async function criarAgendamento(data, forcar = false) {
 
     const existenteNaSemana = await prisma.agendamento.findFirst({
       where: {
-        clienteId,
+        clienteId: Number(clienteId),
         status: STATUS.AGENDADO,
         data: { gte: inicioSemana, lte: fimSemana },
       },
@@ -203,7 +210,7 @@ export async function criarAgendamento(data, forcar = false) {
   return await prisma.$transaction(async (tx) => {
     const agendamento = await tx.agendamento.create({
       data: {
-        clienteId,
+        clienteId: Number(clienteId),
         data: inicio.toDate(),
         status: STATUS.AGENDADO,
       },
@@ -215,9 +222,7 @@ export async function criarAgendamento(data, forcar = false) {
       precoPago: s.preco,
     }));
 
-    await tx.agendamentoServico.createMany({
-      data: vinculos,
-    });
+    await tx.agendamentoServico.createMany({ data: vinculos });
 
     return tx.agendamento.findUnique({
       where: { id: agendamento.id },
@@ -228,7 +233,7 @@ export async function criarAgendamento(data, forcar = false) {
 
 export async function atualizarAgendamento(id, novaData, isAdmin = false) {
   const agendamento = await prisma.agendamento.findUnique({
-    where: { id },
+    where: { id: Number(id) },
     include: { servicos: { include: { servico: true } } },
   });
 
@@ -240,31 +245,26 @@ export async function atualizarAgendamento(id, novaData, isAdmin = false) {
   if (!isAdmin) {
     const diferencaHoras = dayjs(agendamento.data).diff(dayjs(), "hour");
     if (diferencaHoras < 48) {
-      throw new Error(
-        "Alterações só são permitidas com 2 dias de antecedência.",
-      );
+      throw new Error("Alterações permitidas apenas com 48h de antecedência.");
     }
   }
 
   const duracao = duracaoTotalMinutos(
     agendamento.servicos.map((s) => s.servico),
   );
-  const inicio = dayjs(novaData);
+
+  // CRUCIAL: Passa o ID atual para ignorar os próprios slots na checagem
   const ocupados = await mapearOcupacaoDoDia(novaData, id);
 
-  if (ocupados.has(inicio.format("HH:mm"))) {
-    throw new Error("O novo horário já está ocupado.");
+  const inicio = dayjs(novaData);
+  const horaFormatada = inicio.format("HH:mm");
+
+  if (ocupados.has(horaFormatada)) {
+    throw new Error("O novo horário já está ocupado por outro cliente.");
   }
 
-  if (
-    !slotTemEspacoSuficiente(
-      inicio.format("HH:mm"),
-      duracao,
-      ocupados,
-      novaData,
-    )
-  ) {
-    throw new Error("Não há espaço suficiente neste horário.");
+  if (!slotTemEspacoSuficiente(horaFormatada, duracao, ocupados, novaData)) {
+    throw new Error("Espaço insuficiente para a duração do serviço.");
   }
 
   const dataAntigaFormatada = dayjs(agendamento.data).format(
@@ -274,7 +274,7 @@ export async function atualizarAgendamento(id, novaData, isAdmin = false) {
   const autor = isAdmin ? "Admin" : "Cliente";
 
   return prisma.agendamento.update({
-    where: { id },
+    where: { id: Number(id) },
     data: {
       data: inicio.toDate(),
       log: `Horário alterado de ${dataAntigaFormatada} para às ${dataNovaFormatada} (por: ${autor})`,
@@ -283,7 +283,8 @@ export async function atualizarAgendamento(id, novaData, isAdmin = false) {
 }
 
 export async function atualizarStatus(id, status) {
-  if (!Object.values(STATUS).includes(status))
-    throw new Error("Status inválido");
-  return prisma.agendamento.update({ where: { id }, data: { status } });
+  return prisma.agendamento.update({
+    where: { id: Number(id) },
+    data: { status },
+  });
 }

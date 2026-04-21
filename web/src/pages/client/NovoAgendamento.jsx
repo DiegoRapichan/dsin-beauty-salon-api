@@ -7,24 +7,28 @@ import dayjs from "dayjs";
 function SlotButton({ slot, selecionado, onClick }) {
   const { hora, status } = slot;
 
-  const isLivre        = status === "livre";
-  const isOcupado      = status === "ocupado";
+  const isLivre = status === "livre";
+  const isOcupado = status === "ocupado";
   const isInsuficiente = status === "insuficiente";
-  const isPassado      = status === "passado";
-  const desabilitado   = !isLivre;
+  const isPassado = status === "passado";
+  const desabilitado = !isLivre;
 
-  let cls = "relative py-3 rounded-xl text-xs font-black tracking-wider transition-all select-none ";
+  let cls =
+    "relative py-3 rounded-xl text-xs font-black tracking-wider transition-all select-none ";
   let title = hora;
 
   if (selecionado) {
-    cls += "bg-cyan-600 text-white shadow-lg shadow-cyan-900/30 scale-95 ";
+    cls += "bg-pink-600 text-white shadow-lg shadow-pink-900/30 scale-95 ";
   } else if (isLivre) {
-    cls += "bg-[#0f0f0f] border border-white/10 text-gray-300 hover:border-cyan-500/60 hover:text-white active:scale-95 cursor-pointer ";
+    cls +=
+      "bg-[#0f0f0f] border border-white/10 text-gray-300 hover:border-pink-500/60 hover:text-white active:scale-95 cursor-pointer ";
   } else if (isOcupado) {
-    cls += "bg-red-950/40 border border-red-900/30 text-red-800 cursor-not-allowed line-through ";
+    cls +=
+      "bg-red-950/40 border border-red-900/30 text-red-800 cursor-not-allowed line-through ";
     title = `${hora} — Ocupado`;
   } else if (isInsuficiente) {
-    cls += "bg-yellow-950/30 border border-yellow-900/20 text-yellow-900/70 cursor-not-allowed ";
+    cls +=
+      "bg-yellow-950/30 border border-yellow-900/20 text-yellow-900/70 cursor-not-allowed ";
     title = `${hora} — Sem espaço suficiente p/ o serviço`;
   } else if (isPassado) {
     cls += "bg-white/2 border border-white/5 text-gray-800 cursor-not-allowed ";
@@ -41,10 +45,14 @@ function SlotButton({ slot, selecionado, onClick }) {
     >
       {hora}
       {isOcupado && (
-        <span className="absolute top-0.5 right-1 text-[7px] text-red-800 font-black leading-none">✕</span>
+        <span className="absolute top-0.5 right-1 text-[7px] text-red-800 font-black leading-none">
+          ✕
+        </span>
       )}
       {isInsuficiente && (
-        <span className="absolute top-0.5 right-1 text-[7px] text-yellow-800 font-black leading-none">~</span>
+        <span className="absolute top-0.5 right-1 text-[7px] text-yellow-800 font-black leading-none">
+          ~
+        </span>
       )}
     </button>
   );
@@ -52,31 +60,38 @@ function SlotButton({ slot, selecionado, onClick }) {
 
 export default function NovoAgendamento() {
   const navigate = useNavigate();
-  const [servicos, setServicos]             = useState([]);
-  const [selecionados, setSelecionados]     = useState([]);
+  const [servicos, setServicos] = useState([]);
+  const [selecionados, setSelecionados] = useState([]);
   const [dataSelecionada, setDataSelecionada] = useState("");
-  const [slots, setSlots]                   = useState([]);
+  const [slots, setSlots] = useState([]);
   const [slotSelecionado, setSlotSelecionado] = useState("");
   const [carregandoSlots, setCarregandoSlots] = useState(false);
-  const [loading, setLoading]               = useState(false);
-  const [erro, setErro]                     = useState("");
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState("");
   // sugestao: { detalhes, dataSugestao } | null
-  const [sugestao, setSugestao]             = useState(null);
+  const [sugestao, setSugestao] = useState(null);
   // dados do agendamento pendente enquanto a sugestão está aberta
-  const [pendente, setPendente]             = useState(null);
+  const [pendente, setPendente] = useState(null);
 
   const usuarioRaw = localStorage.getItem("usuario");
-  const cliente    = usuarioRaw ? JSON.parse(usuarioRaw) : null;
-  const hoje       = dayjs().format("YYYY-MM-DD");
+  const cliente = usuarioRaw ? JSON.parse(usuarioRaw) : null;
+  const hoje = dayjs().format("YYYY-MM-DD");
 
   useEffect(() => {
-    if (!cliente) { navigate("/"); return; }
-    api.get("/servicos").then(({ data }) => setServicos(data)).catch(() => setErro("Erro ao carregar serviços."));
+    if (!cliente) {
+      navigate("/");
+      return;
+    }
+    api
+      .get("/servicos")
+      .then(({ data }) => setServicos(data))
+      .catch(() => setErro("Erro ao carregar serviços."));
   }, []);
 
-  const duracaoTotal = servicos
-    .filter((s) => selecionados.includes(s.id))
-    .reduce((acc, s) => acc + s.duracao, 0) || 30;
+  const duracaoTotal =
+    servicos
+      .filter((s) => selecionados.includes(s.id))
+      .reduce((acc, s) => acc + s.duracao, 0) || 30;
 
   const carregarSlots = useCallback(async () => {
     if (!dataSelecionada) return;
@@ -95,19 +110,25 @@ export default function NovoAgendamento() {
     }
   }, [dataSelecionada, duracaoTotal]);
 
-  useEffect(() => { carregarSlots(); }, [carregarSlots]);
+  useEffect(() => {
+    carregarSlots();
+  }, [carregarSlots]);
 
   const toggleServico = (id) => {
     setErro("");
     setSlotSelecionado("");
     setSugestao(null);
     setSelecionados((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
   // Envia o agendamento para a API
-  const enviarAgendamento = async ({ dataHora, forcar = false, ignorarSugestao = false }) => {
+  const enviarAgendamento = async ({
+    dataHora,
+    forcar = false,
+    ignorarSugestao = false,
+  }) => {
     setLoading(true);
     setErro("");
     try {
@@ -136,9 +157,18 @@ export default function NovoAgendamento() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErro("");
-    if (selecionados.length === 0) { setErro("Selecione pelo menos um serviço."); return; }
-    if (!dataSelecionada)          { setErro("Selecione uma data."); return; }
-    if (!slotSelecionado)          { setErro("Selecione um horário."); return; }
+    if (selecionados.length === 0) {
+      setErro("Selecione pelo menos um serviço.");
+      return;
+    }
+    if (!dataSelecionada) {
+      setErro("Selecione uma data.");
+      return;
+    }
+    if (!slotSelecionado) {
+      setErro("Selecione um horário.");
+      return;
+    }
     enviarAgendamento({ dataHora: `${dataSelecionada}T${slotSelecionado}:00` });
   };
 
@@ -171,14 +201,16 @@ export default function NovoAgendamento() {
 
   return (
     <div className="p-4 md:p-10 bg-black min-h-screen text-white font-sans">
-      <button onClick={() => navigate("/meus-agendamentos")}
-        className="mb-8 text-cyan-500 font-black uppercase text-xs tracking-widest">
+      <button
+        onClick={() => navigate("/meus-agendamentos")}
+        className="mb-8 text-pink-500 font-black uppercase text-xs tracking-widest"
+      >
         ← Meus Agendamentos
       </button>
 
       <header className="mb-10">
         <h2 className="text-4xl font-black italic tracking-tighter uppercase">
-          Novo <span className="text-cyan-500">Agendamento</span>
+          Novo <span className="text-pink-500">Agendamento</span>
         </h2>
         <p className="text-gray-500 text-sm mt-2 italic">
           Escolha os serviços e um horário disponível.
@@ -189,7 +221,7 @@ export default function NovoAgendamento() {
       {sugestao && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-6">
           <div className="bg-[#0f0f0f] border border-white/10 rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl">
-            <p className="text-[10px] text-cyan-500 font-black uppercase tracking-widest mb-3">
+            <p className="text-[10px] text-pink-500 font-black uppercase tracking-widest mb-3">
               Sugestão da Leila
             </p>
             <p className="text-white font-black text-lg leading-snug mb-2">
@@ -201,7 +233,7 @@ export default function NovoAgendamento() {
             <div className="flex flex-col gap-3">
               <button
                 onClick={aceitarSugestao}
-                className="w-full bg-cyan-600 hover:bg-cyan-500 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-95"
+                className="w-full bg-pink-600 hover:bg-pink-500 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-95"
               >
                 Sim, agendar nessa data
               </button>
@@ -216,8 +248,10 @@ export default function NovoAgendamento() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-10">
-
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-10"
+      >
         {/* ── Serviços ─────────────────────────────────────────────────────── */}
         <div>
           <h3 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-6">
@@ -225,18 +259,30 @@ export default function NovoAgendamento() {
           </h3>
           <div className="grid gap-3">
             {servicos.map((s) => (
-              <button key={s.id} type="button" onClick={() => toggleServico(s.id)}
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => toggleServico(s.id)}
                 className={`p-4 rounded-2xl border-2 text-left transition-all flex justify-between items-center ${
                   selecionados.includes(s.id)
-                    ? "border-cyan-500 bg-cyan-500/10"
+                    ? "border-pink-500 bg-pink-500/10"
                     : "border-white/5 bg-[#0f0f0f]"
-                }`}>
+                }`}
+              >
                 <div>
-                  <p className="font-black uppercase text-xs tracking-wider">{s.nome}</p>
-                  <p className="text-[10px] text-gray-500 mt-0.5">{s.duracao} min</p>
-                  <p className="text-[10px] text-cyan-500 font-mono mt-0.5">R$ {s.preco.toFixed(2)}</p>
+                  <p className="font-black uppercase text-xs tracking-wider">
+                    {s.nome}
+                  </p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">
+                    {s.duracao} min
+                  </p>
+                  <p className="text-[10px] text-pink-500 font-mono mt-0.5">
+                    R$ {s.preco.toFixed(2)}
+                  </p>
                 </div>
-                {selecionados.includes(s.id) && <span className="text-cyan-500 text-lg">✓</span>}
+                {selecionados.includes(s.id) && (
+                  <span className="text-pink-500 text-lg">✓</span>
+                )}
               </button>
             ))}
           </div>
@@ -244,16 +290,21 @@ export default function NovoAgendamento() {
 
         {/* ── Data + Slots + Resumo ─────────────────────────────────────────── */}
         <div className="flex flex-col gap-8">
-
           {/* Data */}
           <div>
             <h3 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-4">
               2. Escolha a Data
             </h3>
-            <input type="date" min={hoje}
-              className="w-full bg-[#0f0f0f] border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-cyan-500 transition-all font-mono"
+            <input
+              type="date"
+              min={hoje}
+              className="w-full bg-[#0f0f0f] border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-pink-500 transition-all font-mono"
               value={dataSelecionada}
-              onChange={(e) => { setDataSelecionada(e.target.value); setErro(""); setSugestao(null); }}
+              onChange={(e) => {
+                setDataSelecionada(e.target.value);
+                setErro("");
+                setSugestao(null);
+              }}
             />
           </div>
 
@@ -263,7 +314,7 @@ export default function NovoAgendamento() {
               <h3 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">
                 3. Horário
                 {selecionados.length > 0 && (
-                  <span className="ml-2 text-cyan-500 normal-case font-normal">
+                  <span className="ml-2 text-pink-500 normal-case font-normal">
                     ({duracaoTotal} min)
                   </span>
                 )}
@@ -276,13 +327,18 @@ export default function NovoAgendamento() {
             </div>
 
             {!dataSelecionada && (
-              <p className="text-gray-600 text-xs italic">Selecione uma data primeiro.</p>
+              <p className="text-gray-600 text-xs italic">
+                Selecione uma data primeiro.
+              </p>
             )}
 
             {dataSelecionada && carregandoSlots && (
               <div className="grid grid-cols-4 gap-2">
                 {[...Array(12)].map((_, i) => (
-                  <div key={i} className="h-10 rounded-xl bg-white/5 animate-pulse" />
+                  <div
+                    key={i}
+                    className="h-10 rounded-xl bg-white/5 animate-pulse"
+                  />
                 ))}
               </div>
             )}
@@ -295,7 +351,10 @@ export default function NovoAgendamento() {
                       key={slot.hora}
                       slot={slot}
                       selecionado={slotSelecionado === slot.hora}
-                      onClick={() => { setSlotSelecionado(slot.hora); setErro(""); }}
+                      onClick={() => {
+                        setSlotSelecionado(slot.hora);
+                        setErro("");
+                      }}
                     />
                   ))}
                 </div>
@@ -318,16 +377,22 @@ export default function NovoAgendamento() {
               </>
             )}
 
-            {dataSelecionada && !carregandoSlots && livres === 0 && slots.length > 0 && (
-              <p className="text-gray-600 text-xs italic mt-3">
-                Nenhum horário disponível para esta data com a duração selecionada.
-              </p>
-            )}
+            {dataSelecionada &&
+              !carregandoSlots &&
+              livres === 0 &&
+              slots.length > 0 && (
+                <p className="text-gray-600 text-xs italic mt-3">
+                  Nenhum horário disponível para esta data com a duração
+                  selecionada.
+                </p>
+              )}
           </div>
 
           {/* Resumo */}
           <div className="bg-[#0a0a0a] p-6 rounded-[2rem] border border-dashed border-white/10">
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black mb-4">Resumo</p>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black mb-4">
+              Resumo
+            </p>
             <div className="flex flex-col gap-2">
               <div className="flex justify-between text-xs text-gray-500">
                 <span>Serviços</span>
@@ -340,14 +405,17 @@ export default function NovoAgendamento() {
               {slotSelecionado && (
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>Horário</span>
-                  <span className="text-cyan-400 font-black">
-                    {dayjs(dataSelecionada).format("DD/MM")} às {slotSelecionado}
+                  <span className="text-pink-400 font-black">
+                    {dayjs(dataSelecionada).format("DD/MM")} às{" "}
+                    {slotSelecionado}
                   </span>
                 </div>
               )}
               <div className="border-t border-white/5 mt-2 pt-2 flex justify-between items-end">
                 <span className="text-gray-400 text-xs italic">Total:</span>
-                <span className="text-2xl font-black text-cyan-500">R$ {totalValor.toFixed(2)}</span>
+                <span className="text-2xl font-black text-pink-500">
+                  R$ {totalValor.toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
@@ -358,9 +426,11 @@ export default function NovoAgendamento() {
             </p>
           )}
 
-          <button type="submit"
+          <button
+            type="submit"
             disabled={loading || !slotSelecionado}
-            className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-gray-800 disabled:cursor-not-allowed text-white p-6 rounded-[2rem] font-black uppercase tracking-widest transition-all shadow-xl shadow-cyan-900/20 active:scale-95">
+            className="bg-pink-600 hover:bg-pink-500 disabled:bg-gray-800 disabled:cursor-not-allowed text-white p-6 rounded-[2rem] font-black uppercase tracking-widest transition-all shadow-xl shadow-pink-900/20 active:scale-95"
+          >
             {loading ? "Processando..." : "Confirmar Agendamento"}
           </button>
         </div>

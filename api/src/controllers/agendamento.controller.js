@@ -5,8 +5,8 @@ const agendamentoSchema = z.object({
   clienteId: z.number(),
   dataHora: z.string(),
   servicos: z.array(z.number()).min(1, "Selecione pelo menos um serviço."),
-  forcar: z.boolean().optional(),           // true → aceitar sugestão semanal
-  ignorarSugestao: z.boolean().optional(),  // true → recusar sugestão e agendar assim mesmo
+  forcar: z.boolean().optional(), // true → aceitar sugestão semanal
+  ignorarSugestao: z.boolean().optional(), // true → recusar sugestão e agendar assim mesmo
 });
 
 const atualizarSchema = z.object({
@@ -26,7 +26,9 @@ export async function criarAgendamentoController(req, res) {
     res.status(201).json(result);
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: true, message: err.errors[0].message });
+      return res
+        .status(400)
+        .json({ error: true, message: err.errors[0].message });
     }
     res.status(400).json({ error: true, message: err.message });
   }
@@ -36,11 +38,17 @@ export async function atualizarAgendamentoController(req, res) {
   try {
     const { id } = req.params;
     const { dataHora, isAdmin } = atualizarSchema.parse(req.body);
-    const result = await agendamentoService.atualizarAgendamento(Number(id), dataHora, isAdmin);
+    const result = await agendamentoService.atualizarAgendamento(
+      Number(id),
+      dataHora,
+      isAdmin,
+    );
     res.json(result);
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: true, message: err.errors[0].message });
+      return res
+        .status(400)
+        .json({ error: true, message: err.errors[0].message });
     }
     res.status(400).json({ error: true, message: err.message });
   }
@@ -49,32 +57,52 @@ export async function atualizarAgendamentoController(req, res) {
 export async function historicoController(req, res) {
   try {
     const { clienteId, inicio, fim } = req.query;
-    const idConvertido = clienteId && clienteId !== "undefined" ? Number(clienteId) : undefined;
-    const result = await agendamentoService.buscarHistorico(idConvertido, inicio, fim);
+    const idConvertido =
+      clienteId && clienteId !== "undefined" ? Number(clienteId) : undefined;
+    const result = await agendamentoService.buscarHistorico(
+      idConvertido,
+      inicio,
+      fim,
+    );
     res.json(result);
   } catch (err) {
-    res.status(400).json({ error: true, message: "Erro ao carregar histórico: " + err.message });
+    res
+      .status(400)
+      .json({
+        error: true,
+        message: "Erro ao carregar histórico: " + err.message,
+      });
   }
 }
 
 export async function statusController(req, res) {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const status = req.method === "DELETE" ? "CANCELADO" : req.body.status;
+
+    if (!status) {
+      return res
+        .status(400)
+        .json({ error: true, message: "Status não informado." });
+    }
+
     const result = await agendamentoService.atualizarStatus(Number(id), status);
     res.json(result);
   } catch (err) {
-    res.status(400).json({ error: true, message: "Erro ao atualizar status: " + err.message });
+    res.status(400).json({
+      error: true,
+      message: "Erro ao atualizar status: " + err.message,
+    });
   }
 }
 
-// GET /agendamentos/slots?data=YYYY-MM-DD&duracaoMinutos=60
-// Retorna todos os slots do dia com status visual
 export async function slotsDisponiveisController(req, res) {
   try {
     const { data, duracaoMinutos } = req.query;
     if (!data) {
-      return res.status(400).json({ error: true, message: "Parâmetro 'data' é obrigatório." });
+      return res
+        .status(400)
+        .json({ error: true, message: "Parâmetro 'data' é obrigatório." });
     }
     const slots = await agendamentoService.buscarSlotsComStatus({
       data,

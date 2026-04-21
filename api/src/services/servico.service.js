@@ -16,5 +16,14 @@ export async function atualizarServico(id, { nome, preco, duracao }) {
 }
 
 export async function excluirServico(id) {
+  // Verifica se existem agendamentos vinculados a este serviço
+  const agendamentosVinculados = await prisma.agendamentoServico.count({
+    where: { servicoId: id },
+  });
+
+  if (agendamentosVinculados > 0) {
+    throw new Error("SERVICO_COM_AGENDAMENTOS");
+  }
+
   return prisma.servico.delete({ where: { id } });
 }

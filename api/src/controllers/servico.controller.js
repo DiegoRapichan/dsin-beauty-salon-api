@@ -32,12 +32,8 @@ export async function criarController(req, res) {
 export async function atualizarController(req, res) {
   try {
     const { id } = req.params;
-    // .partial() permite atualizar apenas um campo se quiser
     const dados = servicoSchema.partial().parse(req.body);
-
     const servico = await servicoService.atualizarServico(Number(id), dados);
-
-    // Retornamos o objeto com uma propriedade de aviso para o Frontend
     res.json({
       ...servico,
       aviso:
@@ -57,12 +53,12 @@ export async function excluirController(req, res) {
     await servicoService.excluirServico(Number(id));
     res.status(204).send();
   } catch (err) {
-    // Melhoramos a mensagem para a Leila entender por que não pode excluir
-    res
-      .status(400)
-      .json({
+    if (err.message === "SERVICO_COM_AGENDAMENTOS") {
+      return res.status(409).json({
         error:
-          "Este serviço já possui agendamentos e não pode ser removido para não afetar o histórico financeiro.",
+          "Não é possível excluir este serviço pois ele possui agendamentos vinculados.",
       });
+    }
+    res.status(500).json({ error: "Erro ao excluir serviço." });
   }
 }
