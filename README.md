@@ -62,35 +62,35 @@ A **Cabeleleila Leila** enfrentava três desafios principais que este software r
 
 ## Evidências do Projeto (Screenshots)
 
-### Visão do Administrador (Gestão)
+### 🖥️ Visão do Administrador (Gestão)
 
-| Funcionalidade       | Descrição Técnica                              | Screenshot                        |
-| -------------------- | ---------------------------------------------- | --------------------------------- |
-| Login Administrativo | Acesso seguro para gestores e funcionários     | `Screenshots/admin_login.png`     |
-| Dashboard Principal  | Métricas de faturamento real e agenda do dia   | `Screenshots/admin_dashboard.png` |
-| Gestão de Serviços   | Controle de CRUD, duração e preços             | `Screenshots/admin_servicos.png`  |
-| Base de Clientes     | Listagem e busca de clientes cadastrados       | `Screenshots/admin_clientes.png`  |
-| Gestão de Usuários   | Controle de acesso dos funcionários ao sistema | `Screenshots/admin_usuarios.png`  |
+| Funcionalidade           | Descrição Técnica                            | Screenshot (Clique para ampliar)                                                                      |
+| :----------------------- | :------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| **Login Administrativo** | Acesso seguro para gestores e funcionários   | <a href="Screenshots/admin_login.png"><img src="Screenshots/admin_login.png" width="250"></a>         |
+| **Dashboard Principal**  | Métricas de faturamento real e agenda do dia | <a href="Screenshots/admin_dashboard.png"><img src="Screenshots/admin_dashboard.png" width="250"></a> |
+| **Gestão de Serviços**   | Controle de CRUD, duração e preços           | <a href="Screenshots/admin_servicos.png"><img src="Screenshots/admin_servicos.png" width="250"></a>   |
+| **Base de Clientes**     | Listagem e busca de clientes cadastrados     | <a href="Screenshots/admin_clientes.png"><img src="Screenshots/admin_clientes.png" width="250"></a>   |
+| **Gestão de Usuários**   | Controle de acesso dos funcionários          | <a href="Screenshots/admin_usuarios.png"><img src="Screenshots/admin_usuarios.png" width="250"></a>   |
 
-### Experiência do Cliente
+### 📱 Experiência do Cliente
 
-| Funcionalidade       | Descrição Técnica                                       | Screenshot                                                           |
-| -------------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
-| Primeiro Acesso      | Landing page de boas-vindas ao salão                    | `Screenshots/cliente_primeiro_acesso.png`                            |
-| Login / Cadastro     | Fluxo simplificado via telefone (11 dígitos)            | `Screenshots/cliente_login.png` / `Screenshots/cadastro_cliente.png` |
-| Novo Agendamento     | Interface de seleção de múltiplos serviços e horários   | `Screenshots/cliente_agendamento.png`                                |
-| Sugestão Inteligente | Recomendação para agrupar horários na mesma semana      | `Screenshots/cliente_recomendacao_agendamento.png`                   |
-| Meus Horários        | Central de agendamentos com status e trava de 48h       | `Screenshots/cliente_meus_horarios.png`                              |
-| Reagendamento        | Interface de alteração com validação de disponibilidade | `Screenshots/cliente_reagendar.png`                                  |
+| Funcionalidade           | Descrição Técnica                          | Screenshot (Clique para ampliar)                                                                                                                                                                                          |
+| :----------------------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Primeiro Acesso**      | Landing page de boas-vindas ao salão       | <a href="Screenshots/cliente_primeiro_acesso.png"><img src="Screenshots/cliente_primeiro_acesso.png" width="250"></a>                                                                                                     |
+| **Login / Cadastro**     | Fluxo simplificado via Telefone            | <a href="Screenshots/cliente_login.png"><img src="Screenshots/cliente_login.png" width="120"></a> <a href="Screenshots/cliente_cadastro_cliente.png"><img src="Screenshots/cliente_cadastro_cliente.png" width="120"></a> |
+| **Novo Agendamento**     | Seleção de múltiplos serviços e horários   | <a href="Screenshots/cliente_agendamento.png"><img src="Screenshots/cliente_agendamento.png" width="250"></a>                                                                                                             |
+| **Sugestão Inteligente** | Recomendação de agrupamento semanal        | <a href="Screenshots/cliente_recomendacao_agendamento.png"><img src="Screenshots/cliente_recomendacao_agendamento.png" width="250"></a>                                                                                   |
+| **Meus Horários**        | Central de agendamentos e trava de 48h     | <a href="Screenshots/cliente_meus_horarios.png"><img src="Screenshots/cliente_meus_horarios.png" width="250"></a>                                                                                                         |
+| **Reagendamento**        | Validação de disponibilidade em tempo real | <a href="Screenshots/cliente_reagendar.png"><img src="Screenshots/cliente_reagendar.png" width="250"></a>                                                                                                                 |
 
-### Camada Técnica (Backend & Dados)
+### ⚙️ Camada Técnica (Backend & Dados)
 
-| Componente           | Descrição Técnica                               | Screenshot                                          |
-| -------------------- | ----------------------------------------------- | --------------------------------------------------- |
-| Documentação Swagger | Todos os endpoints REST mapeados e testáveis    | `Screenshots/tecnico_swagger.png`                   |
-| Suíte de Testes      | Validações unitárias e de integração (Vitest)   | `Screenshots/tecnico_testes.png`                    |
-| Modelagem Prisma     | Tabela de Agendamentos (relação Cliente/Status) | `Screenshots/tecnico_prisma_Agendamento.png`        |
-| Preço Imutável       | Tabela intermediária salvando o valor histórico | `Screenshots/tecnico_prisma_AgendamentoServico.png` |
+| Componente               | Descrição Técnica                            | Screenshot (Clique para ampliar)                                                                                                          |
+| :----------------------- | :------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Documentação Swagger** | Endpoints REST mapeados e testáveis          | <a href="Screenshots/tecnico_swagger.png"><img src="Screenshots/tecnico_swagger.png" width="250"></a>                                     |
+| **Suíte de Testes**      | Validações unitárias e de integração         | <a href="Screenshots/tecnico_testes.png"><img src="Screenshots/tecnico_testes.png" width="250"></a>                                       |
+| **Modelagem Prisma**     | Tabela de Agendamentos (Prisma Studio)       | <a href="Screenshots/tecnico_prisma_Agendamento.png"><img src="Screenshots/tecnico_prisma_Agendamento.png" width="250"></a>               |
+| **Preço Imutável**       | Tabela intermediária de histórico de valores | <a href="Screenshots/tecnico_prisma_AgendamentoServico.png"><img src="Screenshots/tecnico_prisma_AgendamentoServico.png" width="250"></a> |
 
 ---
 
