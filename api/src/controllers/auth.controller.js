@@ -1,5 +1,6 @@
-import { register, login } from "../services/auth.service.js";
+import { register, login, loginCliente } from "../services/auth.service.js";
 
+// Registro de usuário admin
 export async function registerController(req, res) {
   try {
     const result = await register(req.body);
@@ -9,6 +10,7 @@ export async function registerController(req, res) {
   }
 }
 
+// Login admin (email + senha)
 export async function loginController(req, res) {
   try {
     const result = await login(req.body);
@@ -18,22 +20,18 @@ export async function loginController(req, res) {
   }
 }
 
-export async function loginCliente(req, res) {
-  const { telefone } = req.body;
+// Login cliente (somente telefone)
+export async function loginClienteController(req, res) {
+  try {
+    const { telefone } = req.body;
 
-  const cliente = await prisma.cliente.findFirst({
-    where: { telefone: telefone },
-  });
+    if (!telefone) {
+      return res.status(400).json({ error: "Telefone é obrigatório." });
+    }
 
-  if (!cliente) {
-    return res.status(404).json({ message: "Cliente não cadastrado." });
+    const resultado = await loginCliente({ telefone });
+    res.json(resultado);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
   }
-
-  return res.json({
-    usuario: {
-      id: cliente.id,
-      nome: cliente.nome,
-      role: "CLIENTE",
-    },
-  });
 }

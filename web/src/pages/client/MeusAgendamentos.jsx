@@ -22,9 +22,17 @@ export default function MeusAgendamentos() {
   };
 
   useEffect(() => {
-    if (!cliente) navigate("/login");
+    if (!cliente) {
+      navigate("/");
+      return;
+    }
     carregarMeusAgendamentos();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("usuario");
+    navigate("/");
+  };
 
   return (
     <div className="p-4 md:p-10 bg-black min-h-screen text-white font-sans">
@@ -37,15 +45,34 @@ export default function MeusAgendamentos() {
             Olá, {cliente?.nome}
           </p>
         </div>
-        <button
-          onClick={() => navigate("/novo-agendamento")}
-          className="bg-cyan-600 p-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-900/20"
-        >
-          + Agendar
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate("/novo-agendamento")}
+            className="bg-cyan-600 p-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-900/20"
+          >
+            + Agendar
+          </button>
+          <button
+            onClick={handleLogout}
+            className="text-gray-600 hover:text-gray-300 p-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-colors"
+          >
+            Sair
+          </button>
+        </div>
       </header>
 
       <div className="grid gap-6">
+        {agendamentos.length === 0 && (
+          <div className="py-20 text-center border-2 border-dashed border-gray-800 rounded-[3rem]">
+            <p className="text-gray-600 italic">Nenhum agendamento encontrado.</p>
+            <button
+              onClick={() => navigate("/novo-agendamento")}
+              className="mt-6 bg-cyan-600 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-cyan-900/20"
+            >
+              Fazer primeiro agendamento
+            </button>
+          </div>
+        )}
         {agendamentos.map((a) => {
           const dataAgendamento = dayjs(a.data);
           const agora = dayjs();
