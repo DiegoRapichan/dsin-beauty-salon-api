@@ -2,7 +2,7 @@
 
 > Aplicação Full Stack desenvolvida para o desafio técnico da **DSIN**. Soluciona a gestão completa de agendamentos de um salão de beleza com inteligência de dados, regras de negócio rigorosas e interface premium Dark Mode.
 
-🎬 **[Assistir Apresentação Técnica](#)** ← substitua pelo link do vídeo
+**[Assistir Apresentação Técnica](https://www.loom.com/share/8f1c77da086e4ce2944b3e206d6d86a8)**
 
 ---
 
@@ -132,7 +132,7 @@ cd api && npm test
 
 O vídeo demonstra o ciclo de vida completo da aplicação: do auto-cadastro do cliente via telefone até a gestão administrativa pela Leila, com destaque para a segurança de tipos, execução dos testes automatizados e a prova da integridade financeira via `precoPago`.
 
-**[Assistir Apresentação Técnica](#)** ← substitua pelo link do vídeo
+**[Assistir Apresentação Técnica](https://www.loom.com/share/8f1c77da086e4ce2944b3e206d6d86a8)**
 
 ---
 
