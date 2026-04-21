@@ -66,31 +66,31 @@ A **Cabeleleila Leila** enfrentava três desafios principais que este software r
 
 | Funcionalidade       | Descrição Técnica                              | Screenshot                        |
 | -------------------- | ---------------------------------------------- | --------------------------------- |
-| Login Administrativo | Acesso seguro para gestores e funcionários     | `screenshots/admin_login.png`     |
-| Dashboard Principal  | Métricas de faturamento real e agenda do dia   | `screenshots/admin_dashboard.png` |
-| Gestão de Serviços   | Controle de CRUD, duração e preços             | `screenshots/admin_servicos.png`  |
-| Base de Clientes     | Listagem e busca de clientes cadastrados       | `screenshots/admin_clientes.png`  |
-| Gestão de Usuários   | Controle de acesso dos funcionários ao sistema | `screenshots/admin_usuarios.png`  |
+| Login Administrativo | Acesso seguro para gestores e funcionários     | `Screenshots/admin_login.png`     |
+| Dashboard Principal  | Métricas de faturamento real e agenda do dia   | `Screenshots/admin_dashboard.png` |
+| Gestão de Serviços   | Controle de CRUD, duração e preços             | `Screenshots/admin_servicos.png`  |
+| Base de Clientes     | Listagem e busca de clientes cadastrados       | `Screenshots/admin_clientes.png`  |
+| Gestão de Usuários   | Controle de acesso dos funcionários ao sistema | `Screenshots/admin_usuarios.png`  |
 
 ### Experiência do Cliente
 
 | Funcionalidade       | Descrição Técnica                                       | Screenshot                                                           |
 | -------------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
-| Primeiro Acesso      | Landing page de boas-vindas ao salão                    | `screenshots/cliente_primeiro_acesso.png`                            |
-| Login / Cadastro     | Fluxo simplificado via telefone (11 dígitos)            | `screenshots/cliente_login.png` / `screenshots/cadastro_cliente.png` |
-| Novo Agendamento     | Interface de seleção de múltiplos serviços e horários   | `screenshots/cliente_agendamento.png`                                |
-| Sugestão Inteligente | Recomendação para agrupar horários na mesma semana      | `screenshots/cliente_recomendacao_agendamento.png`                   |
-| Meus Horários        | Central de agendamentos com status e trava de 48h       | `screenshots/cliente_meus_horarios.png`                              |
-| Reagendamento        | Interface de alteração com validação de disponibilidade | `screenshots/cliente_reagendar.png`                                  |
+| Primeiro Acesso      | Landing page de boas-vindas ao salão                    | `Screenshots/cliente_primeiro_acesso.png`                            |
+| Login / Cadastro     | Fluxo simplificado via telefone (11 dígitos)            | `Screenshots/cliente_login.png` / `Screenshots/cadastro_cliente.png` |
+| Novo Agendamento     | Interface de seleção de múltiplos serviços e horários   | `Screenshots/cliente_agendamento.png`                                |
+| Sugestão Inteligente | Recomendação para agrupar horários na mesma semana      | `Screenshots/cliente_recomendacao_agendamento.png`                   |
+| Meus Horários        | Central de agendamentos com status e trava de 48h       | `Screenshots/cliente_meus_horarios.png`                              |
+| Reagendamento        | Interface de alteração com validação de disponibilidade | `Screenshots/cliente_reagendar.png`                                  |
 
 ### Camada Técnica (Backend & Dados)
 
 | Componente           | Descrição Técnica                               | Screenshot                                          |
 | -------------------- | ----------------------------------------------- | --------------------------------------------------- |
-| Documentação Swagger | Todos os endpoints REST mapeados e testáveis    | `screenshots/tecnico_swagger.png`                   |
-| Suíte de Testes      | Validações unitárias e de integração (Vitest)   | `screenshots/tecnico_testes.png`                    |
-| Modelagem Prisma     | Tabela de Agendamentos (relação Cliente/Status) | `screenshots/tecnico_prisma_Agendamento.png`        |
-| Preço Imutável       | Tabela intermediária salvando o valor histórico | `screenshots/tecnico_prisma_AgendamentoServico.png` |
+| Documentação Swagger | Todos os endpoints REST mapeados e testáveis    | `Screenshots/tecnico_swagger.png`                   |
+| Suíte de Testes      | Validações unitárias e de integração (Vitest)   | `Screenshots/tecnico_testes.png`                    |
+| Modelagem Prisma     | Tabela de Agendamentos (relação Cliente/Status) | `Screenshots/tecnico_prisma_Agendamento.png`        |
+| Preço Imutável       | Tabela intermediária salvando o valor histórico | `Screenshots/tecnico_prisma_AgendamentoServico.png` |
 
 ---
 
