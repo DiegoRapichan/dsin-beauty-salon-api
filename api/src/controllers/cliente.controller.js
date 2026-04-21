@@ -1,51 +1,57 @@
-import { prisma } from "../prisma.js";
+import * as clienteService from "../services/cliente.service.js";
 import { z } from "zod";
 
-const cadastroClienteSchema = z.object({
-  nome: z
-    .string()
-    .min(3, "O nome deve ter pelo menos 3 caracteres")
-    .max(100, "Nome muito longo")
-    .trim(),
+const clienteSchema = z.object({
+  nome: z.string().min(3, "O nome deve ter pelo menos 3 caracteres").max(100).trim(),
   telefone: z
     .string()
     .min(10, "Telefone inválido. Informe o DDD + Número")
-    .max(15, "Telefone muito longo")
+    .max(15)
     .regex(/^\d+$/, "O telefone deve conter apenas números"),
 });
 
-export async function createCliente(req, res) {
+export async function listarController(req, res) {
   try {
-    const { nome, telefone } = cadastroClienteSchema.parse(req.body);
+    const clientes = await clienteService.listarClientes();
+    res.json(clientes);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao listar clientes." });
+  }
+}
 
-    const clienteExistente = await prisma.cliente.findFirst({
-      where: { telefone: telefone },
-    });
-
-    if (clienteExistente) {
-      return res.status(400).json({
-        error: true,
-        message: "Este telefone já está cadastrado. Que tal fazer login?",
-      });
-    }
-
-    const novoCliente = await prisma.cliente.create({
-      data: { nome, telefone },
-    });
-
-    return res.status(201).json(novoCliente);
+export async function criarController(req, res) {
+  try {
+    const dados = clienteSchema.parse(req.body);
+    const cliente = await clienteService.criarCliente(dados);
+    res.status(201).json(cliente);
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({
-        error: true,
-        message: err.errors[0].message,
-      });
+      return res.status(400).json({ error: err.errors[0].message });
     }
+    res.status(400).json({ error: err.message });
+  }
+}
 
-    console.error("Erro ao criar cliente:", err);
-    return res.status(500).json({
-      error: true,
-      message: "Erro interno ao processar o cadastro.",
-    });
+export async function atualizarController(req, res) {
+  try {
+    const { id } = req.params;
+    const dados = clienteSchema.partial().parse(req.body);
+    const cliente = await clienteService.atualizarCliente(Number(id), dados);
+    res.json(cliente);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: err.errors[0].message });
+    }
+    res.status(400).json({ error: "Erro ao atualizar cliente." });
+  }
+}
+
+export async function excluirController(req, res) {
+  try {
+    const { id } = req.params;
+    await clienteService.excluirCliente(Number(id));
+    res.status(204).send();
+  } catch (err) {
+    res.status(400).json({ error: "Erro ao excluir: cliente possui agendamentos." });
   }
 }

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const SECRET = "segredo";
+const SECRET = process.env.JWT_SECRET || "troque_por_uma_chave_segura";
 
 export function authMiddleware(req, res, next) {
   const auth = req.headers.authorization;
@@ -13,9 +13,9 @@ export function authMiddleware(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, SECRET);
-    req.user = decoded;
+    req.usuario = decoded;
     next();
   } catch {
-    return res.status(401).json({ error: "Token inválido" });
+    return res.status(401).json({ error: "Token inválido ou expirado" });
   }
 }

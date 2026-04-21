@@ -4,23 +4,23 @@ import { useNavigate } from "react-router-dom";
 
 export default function LoginAdmin() {
   const navigate = useNavigate();
-  // Mantive seus padrões de teste, mas limpei para produção se preferir
-  const [email, setEmail] = useState("admin@salao.com");
-  const [password, setPassword] = useState("123456");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setErro("");
+    setLoading(true);
     try {
-      const { data } = await api.post("/auth/login", { email, password });
-
+      const { data } = await api.post("/auth/login", { email, senha });
       localStorage.setItem("token", data.token);
-      localStorage.setItem("usuario", JSON.stringify(data.usuario));
-
-      // AGORA REDIRECIONA PARA A ROTA ADMIN
       navigate("/admin");
-    } catch (err) {
-      console.error(err);
-      alert("Credenciais inválidas ou erro no servidor.");
+    } catch {
+      setErro("Credenciais inválidas. Verifique e-mail e senha.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,56 +30,28 @@ export default function LoginAdmin() {
         <h1 className="text-5xl font-black italic tracking-tighter leading-none text-white">
           LEILA <span className="text-cyan-500 not-italic">SALON</span>
         </h1>
-        <p className="text-[10px] text-gray-500 tracking-[0.4em] uppercase mt-3 font-bold">
-          Management System Access
-        </p>
+        <p className="text-[10px] text-gray-500 tracking-[0.4em] uppercase mt-3 font-bold">Management System Access</p>
       </div>
 
-      <form
-        onSubmit={handleLogin}
-        className="bg-[#0f0f0f] p-10 rounded-[2.5rem] border border-white/5 shadow-2xl w-full max-w-md"
-      >
+      <form onSubmit={handleLogin} className="bg-[#0f0f0f] p-10 rounded-[2.5rem] border border-white/5 shadow-2xl w-full max-w-md">
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest px-1">
-              E-mail Administrativo
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white transition-all placeholder:text-gray-800"
-              placeholder="seu@email.com"
-              required
-            />
+            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest px-1">E-mail Administrativo</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white transition-all placeholder:text-gray-800" placeholder="seu@email.com" required />
           </div>
-
           <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest px-1">
-              Senha
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white transition-all placeholder:text-gray-800"
-              placeholder="••••••••"
-              required
-            />
+            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest px-1">Senha</label>
+            <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} className="w-full bg-black p-4 rounded-2xl border border-gray-800 focus:border-cyan-500 outline-none text-white transition-all placeholder:text-gray-800" placeholder="••••••••" required />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-cyan-600 hover:bg-cyan-500 py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-cyan-900/20 active:scale-95 text-xs mt-4"
-          >
-            Entrar no Painel
+          {erro && <p className="text-red-500 text-xs font-bold bg-red-500/10 border border-red-500/20 p-3 rounded-xl">{erro}</p>}
+
+          <button type="submit" disabled={loading} className="w-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-gray-800 py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-cyan-900/20 active:scale-95 text-xs mt-4">
+            {loading ? "Verificando..." : "Entrar no Painel"}
           </button>
         </div>
       </form>
-
-      <p className="mt-8 text-gray-600 text-xs font-medium italic">
-        Acesso restrito a colaboradores autorizados.
-      </p>
+      <p className="mt-8 text-gray-600 text-xs font-medium italic">Acesso restrito a colaboradores autorizados.</p>
     </div>
   );
 }

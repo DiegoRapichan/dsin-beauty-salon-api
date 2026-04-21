@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api";
-import { useNavigate } from "react-router-dom";
+import AdminLayout from "../../components/AdminLayout";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [form, setForm] = useState({ nome: "", email: "", senha: "" });
   const [editandoId, setEditandoId] = useState(null);
-  const navigate = useNavigate();
+  const [erro, setErro] = useState("");
+  const { getUsuario } = useAuth();
 
   const carregarUsuarios = async () => {
     try {
       const { data } = await api.get("/usuarios");
       setUsuarios(data);
-    } catch (err) {
+    } catch {
       console.error("Erro ao carregar usuários");
     }
   };
@@ -23,28 +25,22 @@ export default function Usuarios() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErro("");
     try {
-      const payload = {
-        nome: form.nome,
-        email: form.email,
-        password: form.senha,
-      };
+      const payload = { nome: form.nome, email: form.email, senha: form.senha };
 
       if (editandoId) {
         await api.put(`/usuarios/${editandoId}`, payload);
         setEditandoId(null);
-        alert("✨ Usuário atualizado!");
       } else {
         await api.post("/usuarios", payload);
-        alert("✨ Usuário cadastrado com sucesso!");
       }
 
       setForm({ nome: "", email: "", senha: "" });
       carregarUsuarios();
     } catch (err) {
-      alert(
-        err.response?.data?.message || "Erro na operação. Verifique os dados.",
-      );
+      const msg = err.response?.data?.error || "Erro ao processar requisição";
+      setErro(msg);
     }
   };
 
@@ -54,50 +50,27 @@ export default function Usuarios() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const excluirUsuario = async (id) => {
-    const usuarioRaw = localStorage.getItem("usuario");
-
-    // Se for nulo, undefined ou a string "undefined", pula a verificação de self-delete
-    let usuarioLogadoId = null;
-    if (usuarioRaw && usuarioRaw !== "undefined") {
-      try {
-        const user = JSON.parse(usuarioRaw);
-        usuarioLogadoId = user?.id;
-      } catch (e) {
-        console.error("Erro ao ler usuário do storage");
-      }
+  const excluir = async (id) => {
+    const usuarioLogado = getUsuario();
+    if (usuarioLogado?.id === id) {
+      setErro("Você não pode excluir sua própria conta.");
+      return;
     }
-
-    if (window.confirm("Deseja realmente remover este usuário do sistema?")) {
-      // Trava de segurança
-      if (usuarioLogadoId && id === usuarioLogadoId) {
-        alert("Ação Negada: Você não pode excluir sua própria conta.");
-        return;
-      }
-
-      if (id === 1) {
-        alert("Erro: O administrador mestre não pode ser removido.");
-        return;
-      }
-
-      try {
-        await api.delete(`/usuarios/${id}`);
-        carregarUsuarios();
-      } catch (err) {
-        alert("Erro ao excluir: o usuário pode ter registros vinculados.");
-      }
+    if (id === 1) {
+      setErro("O administrador principal não pode ser removido.");
+      return;
+    }
+    if (!window.confirm("Deseja realmente remover este usuário?")) return;
+    try {
+      await api.delete(`/usuarios/${id}`);
+      carregarUsuarios();
+    } catch {
+      setErro("Erro ao excluir usuário.");
     }
   };
 
   return (
-    <div className="p-4 md:p-8 bg-black min-h-screen text-white font-sans selection:bg-cyan-500/30">
-      <button
-        onClick={() => navigate("/dashboard")}
-        className="mb-8 text-cyan-500 hover:text-cyan-300 flex items-center gap-2 font-black uppercase text-[10px] md:text-xs tracking-widest transition-all"
-      >
-        <span className="text-lg">←</span> Voltar ao Painel
-      </button>
-
+    <AdminLayout>
       <header className="mb-10 px-2">
         <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter italic leading-none">
           EQUIPE <span className="text-cyan-500">LEILA SALON</span>
@@ -124,7 +97,6 @@ export default function Usuarios() {
             required
           />
         </div>
-
         <div className="flex flex-col gap-2">
           <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest px-1">
             E-mail de Acesso
@@ -138,7 +110,6 @@ export default function Usuarios() {
             required
           />
         </div>
-
         <div className="flex flex-col gap-2">
           <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest px-1">
             {editandoId ? "Nova Senha (Opcional)" : "Senha de Acesso"}
@@ -152,7 +123,6 @@ export default function Usuarios() {
             required={!editandoId}
           />
         </div>
-
         <div className="flex items-end gap-2">
           <button
             type="submit"
@@ -173,38 +143,44 @@ export default function Usuarios() {
             </button>
           )}
         </div>
+        {erro && (
+          <p className="col-span-full text-red-500 text-xs font-bold bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
+            {erro}
+          </p>
+        )}
       </form>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {usuarios.map((u) => (
           <div
             key={u.id}
-            className="group p-5 md:p-6 bg-gray-900/20 border border-gray-800 rounded-[2rem] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-cyan-500/30 transition-all shadow-xl"
+            className="group bg-[#0f172a] border border-gray-800 rounded-[2.5rem] p-6 flex flex-col gap-6 hover:border-cyan-500/50 transition-all shadow-2xl"
           >
-            <div className="flex items-center gap-4 md:gap-5">
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center border border-cyan-500/10 text-cyan-500 font-black text-xl shadow-inner">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 w-14 h-14 bg-cyan-500/20 rounded-2xl flex items-center justify-center border border-cyan-500/30 text-cyan-400 font-black text-2xl shadow-inner">
                 {u.nome.charAt(0).toUpperCase()}
               </div>
-              <div>
-                <p className="font-black text-lg md:text-xl text-white group-hover:text-cyan-400 transition-colors leading-tight">
+
+              <div className="flex-1 min-w-0">
+                <h3 className="font-black text-2xl text-white tracking-tighter leading-none mb-1 break-words">
                   {u.nome}
-                </p>
-                <p className="text-[10px] md:text-xs text-gray-600 font-bold uppercase tracking-widest mt-1">
+                </h3>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest truncate">
                   {u.email}
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-2 w-full sm:w-auto">
+            <div className="flex gap-3 pt-4 border-t border-gray-800/50">
               <button
                 onClick={() => editar(u)}
-                className="flex-1 sm:flex-none px-5 py-3 bg-gray-900 hover:bg-yellow-600/20 text-yellow-600 rounded-xl text-[9px] md:text-xs font-black uppercase tracking-widest transition-all"
+                className="flex-1 py-4 bg-gray-900 hover:bg-yellow-600/20 text-yellow-500 border border-gray-800 rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95"
               >
-                Editar
+                Editar Colaborador
               </button>
               <button
-                onClick={() => excluirUsuario(u.id)}
-                className="flex-1 sm:flex-none px-5 py-3 bg-gray-900 hover:bg-red-600/20 text-gray-700 hover:text-red-500 rounded-xl text-[9px] md:text-xs font-black uppercase tracking-widest transition-all"
+                onClick={() => excluir(u.id)}
+                className="flex-1 py-4 bg-gray-900 hover:bg-red-600/20 text-red-500 border border-gray-800 rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95"
               >
                 Excluir
               </button>
@@ -212,6 +188,6 @@ export default function Usuarios() {
           </div>
         ))}
       </div>
-    </div>
+    </AdminLayout>
   );
 }

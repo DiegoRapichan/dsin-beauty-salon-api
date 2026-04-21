@@ -7,45 +7,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  nome     String // Adicione esta linha
-  email    String @unique
-  password String
+model Usuario {
+  id    Int    @id @default(autoincrement())
+  nome  String
+  email String @unique
+  senha String
+
+  @@map("usuarios")
 }
 
 model Cliente {
-  id           Int            @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   nome         String
-  telefone     String
+  telefone     String        @unique
   agendamentos Agendamento[]
+
+  @@map("clientes")
 }
 
 model Servico {
-  id        Int     @id @default(autoincrement())
-  nome      String
-  preco     Float
-  duracao   Int      @default(30)
+  id           Int                  @id @default(autoincrement())
+  nome         String
+  preco        Float
+  duracao      Int                  @default(30)
   agendamentos AgendamentoServico[]
+
+  @@map("servicos")
 }
 
-
-
 model Agendamento {
-  id         Int      @id @default(autoincrement())
-  clienteId  Int
-  data       DateTime
-  log        String?
-  status     String   @default("AGENDADO")
-  cliente    Cliente  @relation(fields: [clienteId], references: [id])
-  servicos   AgendamentoServico[]
+  id        Int                  @id @default(autoincrement())
+  clienteId Int
+  data      DateTime
+  log       String?
+  status    String               @default("AGENDADO")
+  cliente   Cliente              @relation(fields: [clienteId], references: [id])
+  servicos  AgendamentoServico[]
+
+  @@map("agendamentos")
 }
 
 model AgendamentoServico {
-  id             Int @id @default(autoincrement())
-  agendamentoId  Int
-  servicoId      Int
+  id            Int         @id @default(autoincrement())
+  agendamentoId Int
+  servicoId     Int
+  precoPago     Float
+  agendamento   Agendamento @relation(fields: [agendamentoId], references: [id])
+  servico       Servico     @relation(fields: [servicoId], references: [id])
 
-  agendamento Agendamento @relation(fields: [agendamentoId], references: [id])
-  servico     Servico     @relation(fields: [servicoId], references: [id])
+  @@map("agendamento_servicos")
 }
